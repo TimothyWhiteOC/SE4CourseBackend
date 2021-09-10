@@ -7,7 +7,6 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var cors = require("cors");
-require("./config/db.config");
 
 var app = express();
 
@@ -20,14 +19,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
 
 // error handler
 app.use(function(err, req, res, next) {
@@ -50,11 +41,19 @@ app.use(cor);
 app.options("*", cor);
 
 var mysql = require("mysql");
+var dbconfig = require("./config/db.config");
 //Database connection
 app.use(function(req, res, next) {
   res.locals.connection = mysql.createConnection(dbconfig);
   res.locals.connection.connect();
   next();
+});
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  next(createError(404));
 });
 
 var port = '8081';
