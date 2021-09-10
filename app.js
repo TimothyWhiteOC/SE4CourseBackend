@@ -6,6 +6,8 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var cors = require("cors");
+require("./config/db.config");
 
 var app = express();
 
@@ -36,6 +38,29 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
+});
+
+const cor = cors({
+  origin: function(origin, callback) {
+    callback(null, true);
+  },
+  credentials: true
+});
+app.use(cor);
+app.options("*", cor);
+
+var mysql = require("mysql");
+//Database connection
+app.use(function(req, res, next) {
+  res.locals.connection = mysql.createConnection(dbconfig);
+  res.locals.connection.connect();
+  next();
+});
+
+var port = '8081';
+var hostname = 'localhost';
+app.listen(port, hostname, function () {
+  console.log("The server is running at http://".concat(hostname, ":").concat(port));
 });
 
 module.exports = app;
