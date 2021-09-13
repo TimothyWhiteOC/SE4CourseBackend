@@ -3,7 +3,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.locals.connection.query("SELECT * FROM courses", function(error, results, fields) {
+  res.locals.connection.query("SELECT courseNo, name FROM courses", function(error, results, fields) {
     if (error) {
       res.status(500);
       res.send(JSON.stringify({ status: 500, error: error, response: null }));
